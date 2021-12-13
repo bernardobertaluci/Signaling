@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlaySound : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private DetectedThief _detectedThief;
 
     private float volume;
     private float maxVolume;
@@ -12,19 +13,22 @@ public class PlaySound : MonoBehaviour
     private float rate;
 
     private IEnumerator _currentCoroutine;
+
     private void Start()
     {
-        var detected = GetComponent<DetectedThief>();
         rate = 0.5f;
         maxVolume = 1;
         minVolume = 0;
-
-        detected.Detected += IncreaseVolume; 
-        detected.Undetected  += DecreaseVolume; 
+        
+        _detectedThief.Detected += IncreaseVolume;
+        _detectedThief.Undetected += DecreaseVolume;
     }
-
-    private void IncreaseVolume() => ChangeVolume(maxVolume);
-    private void DecreaseVolume() => ChangeVolume(minVolume);
+    public void IncreaseVolume()
+    {
+        _audioSource?.Play();
+        ChangeVolume(maxVolume);
+    }
+    public void DecreaseVolume() => ChangeVolume(minVolume);
     private void ChangeVolume(float nextVolume)
     {
         if (_currentCoroutine != null)
@@ -37,11 +41,13 @@ public class PlaySound : MonoBehaviour
 
     private IEnumerator VolumeChanging(float nextVolume)
     {
-        while (volume != nextVolume)
+        _audioSource.volume = 0.5f;
+        while (_audioSource.volume != nextVolume)
         {
-            volume = Mathf.MoveTowards(volume, nextVolume, rate * Time.deltaTime);
-
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, nextVolume, rate * Time.deltaTime);
+            Debug.LogError(Time.timeScale);
             yield return new WaitForEndOfFrame();
+
         }
     }
 }

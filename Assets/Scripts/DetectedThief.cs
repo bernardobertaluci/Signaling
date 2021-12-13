@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public class DetectedThief : MonoBehaviour
 {
-    public UnityAction Detected;
-    public UnityAction Undetected;
+    public event UnityAction Detected;
+    public event UnityAction Undetected;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
