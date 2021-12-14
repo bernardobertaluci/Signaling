@@ -7,28 +7,34 @@ public class PlaySound : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private DetectedThief _detectedThief;
 
-    private float volume;
-    private float maxVolume;
-    private float minVolume;
-    private float rate;
+    private float _maxVolume;
+    private float _minVolume;
+    private float _rate;
 
     private IEnumerator _currentCoroutine;
-
-    private void Start()
+    private void OnEnable()
     {
-        rate = 0.5f;
-        maxVolume = 1;
-        minVolume = 0;
-        
         _detectedThief.Detected += IncreaseVolume;
         _detectedThief.Undetected += DecreaseVolume;
+    }
+
+    private void OnDisable()
+    {
+        _detectedThief.Detected -= IncreaseVolume;
+        _detectedThief.Undetected -= DecreaseVolume;
+    }
+    private void Start()
+    {
+        _rate = 0.5f;
+        _maxVolume = 1;
+        _minVolume = 0;           
     }
     public void IncreaseVolume()
     {
         _audioSource?.Play();
-        ChangeVolume(maxVolume);
+        ChangeVolume(_maxVolume);
     }
-    public void DecreaseVolume() => ChangeVolume(minVolume);
+    public void DecreaseVolume() => ChangeVolume(_minVolume);
     private void ChangeVolume(float nextVolume)
     {
         if (_currentCoroutine != null)
@@ -44,10 +50,9 @@ public class PlaySound : MonoBehaviour
         _audioSource.volume = 0.5f;
         while (_audioSource.volume != nextVolume)
         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, nextVolume, rate * Time.deltaTime);
-            Debug.LogError(Time.timeScale);
-            yield return new WaitForEndOfFrame();
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, nextVolume, _rate * Time.deltaTime);
 
+            yield return new WaitForEndOfFrame();
         }
     }
 }
