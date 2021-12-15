@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class DetectedThief : MonoBehaviour
+public class ThiefDetection : MonoBehaviour
 {
     public event UnityAction Detected;
     public event UnityAction Undetected;

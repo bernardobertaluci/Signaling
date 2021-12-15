@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaySound : MonoBehaviour
+public class Alarm : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private DetectedThief _detectedThief;
+    [SerializeField] private ThiefDetection _detectedThief;
 
     private float _maxVolume;
     private float _minVolume;
     private float _rate;
 
     private IEnumerator _currentCoroutine;
+
     private void OnEnable()
     {
         _detectedThief.Detected += IncreaseVolume;
@@ -23,18 +24,22 @@ public class PlaySound : MonoBehaviour
         _detectedThief.Detected -= IncreaseVolume;
         _detectedThief.Undetected -= DecreaseVolume;
     }
+
     private void Start()
     {
         _rate = 0.5f;
         _maxVolume = 1;
         _minVolume = 0;           
     }
-    public void IncreaseVolume()
+
+    private void IncreaseVolume()
     {
         _audioSource?.Play();
         ChangeVolume(_maxVolume);
     }
-    public void DecreaseVolume() => ChangeVolume(_minVolume);
+
+    private void DecreaseVolume() => ChangeVolume(_minVolume);
+
     private void ChangeVolume(float nextVolume)
     {
         if (_currentCoroutine != null)
